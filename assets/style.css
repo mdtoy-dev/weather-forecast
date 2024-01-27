@@ -38,3 +38,14 @@ header {
     background-color: #0d6efd;
     color: white;
 }
+
+@media (max-width: 815px) {
+    #forecast {
+        display: flex;
+        flex-direction: column;
+        max-width: 90vw;
+        margin: 0;
+        text-align: center;
+        gap: 5px;
+    }
+}
