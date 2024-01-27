@@ -1,4 +1,5 @@
 var searchForm = $("#search-form");
+var searchHistory = []
 
 function displayResults(event) {
     event.preventDefault();
@@ -45,7 +46,9 @@ function displayResults(event) {
                     todayHumidity.text("Humidity: " + weatherData.list[0].main.humidity + " %");
                     todayDiv.append(todayHumidity);
 
+                    $("#today").css("border", "2px solid black");
                     $("#today").prepend(todayDiv);
+                    
 
                     // Display forecast
                     for (let i = 39; i > 0; i -= 8) {
@@ -62,7 +65,7 @@ function displayResults(event) {
                         forecastDiv.append(weatherIcon);
 
                         var temp = $("<p>");
-                        temp.text((weatherData.list[i].main.temp - 273.15).toFixed(2) + " °C");
+                        temp.text("Temp: " + (weatherData.list[i].main.temp - 273.15).toFixed(2) + " °C");
                         forecastDiv.append(temp);
 
                         var wind = $("<p>");
@@ -78,6 +81,36 @@ function displayResults(event) {
 
                 });
         });
+
+    if (!searchHistory.includes(city)) {
+        searchHistory.push(city);
+        localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
+    }
+    displaySearchHistory(); 
 }
+
+function displaySearchHistory() {
+    var historyDiv = $("#history");
+    historyDiv.empty();
+
+    if (searchHistory.length > 0) {
+        for (var i = 0; i < searchHistory.length; i++) {
+            var historyButton = $("<button>");
+            historyButton.text(searchHistory[i]);
+            historyButton.on("click", function () {
+                $("#search-input").val($(this).text());
+                searchForm.submit(); 
+            });
+            historyDiv.append(historyButton);
+        }
+    } else {
+        historyDiv.text("No search history available.");
+    }
+}
+
+
+searchHistory = JSON.parse(localStorage.getItem("searchHistory")) || [];
+displaySearchHistory(); 
+console.log(searchHistory);
 
 searchForm.on("submit", displayResults);
